@@ -1,0 +1,129 @@
+{% load static %}
+<html>
+  <head>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Fronend Vue</title>
+    <link rel="stylesheet" href="{% static 'vue_app/styles.css' %}">
+  </head>
+
+
+  <body>
+
+    <!-- template start -->
+    <div id="vue-app" class="container">
+
+        <div class="steps">
+            <ul class="progressbar">
+                <li v-bind:class="{ active: isOneActive }">step 1</li>
+                <li v-bind:class="{ active: isTwoActive }">step 2</li>
+                <li v-bind:class="{ active: isThreeActive }">step 3</li>
+            </ul>
+        </div>
+
+        <div class="forms">
+
+            <div>
+                <div class="user-input-name" >
+                    <form v-on:submit.prevent="getRandom" >
+                        <input class="google" v-model="userName" type="text" name="name" placeholder="Enter your name..." required>
+                        <input class="submit" type="submit" value="Submit">
+                        <br>
+                        <label class="submit">Your random string:</label>
+                        <br>
+                        <input class="server-output" v-model="random" type="text" id="frand" name="rand" readonly>
+                    </form>
+                </div>
+            </div>
+    
+            <div class="user-input-random" v-show="isTwoActive==true">
+                <form v-on:submit.prevent="checkRandom" >
+                    <input class="google" v-model="userRandom" type="text" id="frandom" name="randomStr" placeholder="Enter random string..." required>
+                    <input type="submit" value="Submit" class="submit">
+                </form>
+            </div>
+    
+            <div class="status" v-show="isThreeActive==true">
+                  <input class="user-status" v-model="status" type="text" id="fstatus" name="stat">
+            </div>
+
+        </div>
+    </div>
+    <!-- template end -->
+
+
+
+    <!-- script start -->
+    <script type="text/javascript">
+      const API_URL_RANDOM = "http://127.0.0.1:8000/vue-app/get-random/"
+      const API_URL_IS_CORRECT_RANDOM = "http://127.0.0.1:8000/vue-app/is-correct-random/"
+      const API_URL_GET_BINART_FILE = "http://127.0.0.1:8000/media/images/LightspinLogo.png"
+      let app = new Vue({
+        el: "#vue-app",
+        delimiters: ['[[', ']]'],
+        data: {
+          userName: '',
+          random: '',
+          isOneActive: true,
+          isTwoActive: false,
+          isThreeActive:false,
+          userRandom:'',
+          status: '',       
+        },
+        mountede(){
+          this.getRandom()
+        },
+        methods:{
+          getRandom(){
+            var letters = /^[A-Za-z]+$/;
+            if(!this.userName.match(letters)){
+              alert('Please input alphabet characters only', 'Error', 'error');
+              this.userName = ''
+              return false;
+            }
+            axios
+            .get(API_URL_RANDOM+this.userName)
+            .then(res=>{
+              console.log(res.data)
+                this.random=res.data;
+            });
+            this.isTwoActive= true;
+          },
+          checkRandom(){
+            axios
+            .get(API_URL_IS_CORRECT_RANDOM+this.userRandom+"/"+this.random)
+            .then(res=>{
+                if(res.data === "correct random string"){
+                  this.status = "Success!";
+                  axios({
+                    url: API_URL_GET_BINART_FILE,
+                    method: 'GET',
+                    responseType: 'blob'
+                    })
+                    .then((response)=>{
+                        var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                        var fileLink = document.createElement('a');
+                        fileLink.href = fileURL;
+                        fileLink.setAttribute('download', 'Lightspin.png');
+                        document.body.appendChild(fileLink);
+                        fileLink.click();
+                      });
+                }
+                else{
+                  console.log(res.data);
+                  this.status = "Error";
+                }   
+              });
+              this.isThreeActive = true;
+          },
+        }
+      });
+    </script>
+    <!-- template end -->
+
+  </body>
+
+
+
+</html>

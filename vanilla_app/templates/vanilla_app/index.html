@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Vanilla</title>
+    <link rel="stylesheet" href="{% static 'vanilla_app/styles/styles.css' %}">
+    <link href='https://fonts.googleapis.com/css2?family=Archivo&family=Signika&display=swap' rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+<div>
+    <div class="steps">
+        <ul class="progressbar">
+            <li class="active" id="step1">step 1</li>
+            <li id="step2">step 2</li>
+            <li id="step3">step 3</li>
+        </ul>
+    </div>
+
+    <br>
+
+    <div class="forms">
+        <div class="user-input-name">
+            <div>
+                <form data-form="form-1">
+                    <input class="google" type="text" name="name" placeholder="Enter your name..." required></input>
+                    <input class="submit" type="submit" value="Submit">
+                    <br>
+                    <label class="submit" for="rand">Your random string:</label>
+                    <br>
+                    <input class="server-output" type="text" id="frand" name="rand" readonly>
+                </form>
+            </div>
+            <br>
+        </div>
+     
+        <div class="user-input-random">
+            <form data-form="form-2" id="form-2">
+               <input class="google" type="text" id="frandom" name="randomStr" placeholder="Enter random string..." required>
+               <br>
+               <input type="submit" value="Submit" class="submit">
+            </form>
+        </div>
+     
+        <div class="status" >
+            <input class="user-status" v-model="status" type="text" id="fstatus" name="stat">
+        </div>
+    </div>
+        
+
+</div>    
+    <script type="text/javascript" src="{% static 'vanilla_app/scripts/vanilla.js' %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</body>
+</html>
